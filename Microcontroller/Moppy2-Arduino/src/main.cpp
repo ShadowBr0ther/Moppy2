@@ -23,12 +23,6 @@ MoppyInstrument *instrument = new instruments::FloppyDrives();
 MoppyInstrument *instrument = new instruments::EasyDrivers();
 #endif
 
-// EasyDriver stepper motor driver
-#ifdef INSTRUMENT_CNCSHIELD
-#include "MoppyInstruments/CNCShieldV3.h"
-MoppyInstrument *instrument = new instruments::CNCShieldV3();
-#endif
-
 // L298N stepper motor driver
 #ifdef INSTRUMENT_L298N
 #include "MoppyInstruments/L298N.h"

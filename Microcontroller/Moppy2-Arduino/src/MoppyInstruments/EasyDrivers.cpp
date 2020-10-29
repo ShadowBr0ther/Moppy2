@@ -14,7 +14,7 @@ const byte LAST_DRIVER = 3;  // This sketch can handle only up to 3 drivers (the
 
 // Maximum note number to attempt to play on easydrivers.  It's possible higher notes may work,
 // but they need to be added in "MoppyInstrument.h".
-const byte MAX_DRIVER_NOTE = 119;
+const byte MAX_DRIVER_NOTE = 190;
 
 
 /*NOTE: The arrays below contain unused zero-indexes to avoid having to do extra
@@ -66,15 +66,17 @@ unsigned int EasyDrivers::originalPeriod[] = {0,0,0,0,0};
 void EasyDrivers::setup() {
 
   // Prepare pins (0 and 1 are reserved for Serial communications)
-  pinMode(2, OUTPUT); // Step pin 1
-  pinMode(3, OUTPUT); // Direction pin 1
-  pinMode(4, OUTPUT); // MS1 pin 1
-  pinMode(5, OUTPUT); // MS2 pin 1
+  pinMode(M1_PIN_STEP, OUTPUT); // Step pin 1
+  pinMode(M2_PIN_STEP, OUTPUT); // Direction pin 1
+  pinMode(M3_PIN_STEP, OUTPUT); // MS1 pin 1
+
+  pinMode(M1_PIN_DIR, OUTPUT); // Step pin 1
+  pinMode(M2_PIN_DIR, OUTPUT); // Direction pin 1
+  pinMode(M3_PIN_DIR, OUTPUT); // MS1 pin 1
+
   pinMode(14, INPUT_PULLUP); // Front Direction-Switch 1
   pinMode(15, INPUT_PULLUP); // Rear Direction-Switch 1
 
-  pinMode(6, OUTPUT); // Step pin 2
-  pinMode(7, OUTPUT); // Direction pin 2
   pinMode(8, OUTPUT); // MS1 pin 2
   pinMode(9, OUTPUT); // MS2 pin 2
   pinMode(16, INPUT_PULLUP); // Front Direction-Switch 2
@@ -189,21 +191,21 @@ void EasyDrivers::tick()
   if (currentPeriod[1]>0){
     currentTick[1]++;
     if (currentTick[1] >= currentPeriod[1]){
-      togglePin(1,2,3); // Drive 1 is on pins 2 and 3
+      togglePin(1,M1_PIN_STEP,M1_PIN_DIR); // Drive 1 is on pins 2 and 3
       currentTick[1]=0;
     }
   }
   if (currentPeriod[2]>0){
     currentTick[2]++;
     if (currentTick[2] >= currentPeriod[2]){
-      togglePin(2,6,7);
+      togglePin(2,M2_PIN_STEP,M2_PIN_DIR);
       currentTick[2]=0;
     }
   }
   if (currentPeriod[3]>0){
     currentTick[3]++;
     if (currentTick[3] >= currentPeriod[3]){
-      togglePin(3,10,11);
+      togglePin(3,M3_PIN_STEP,M3_PIN_DIR);
       currentTick[3]=0;
     }
   }
@@ -271,7 +273,7 @@ void EasyDrivers::resetAll()
 
   // Stop all drivers and set to reverse
   for (byte d=FIRST_DRIVER;d<=LAST_DRIVER;d++) {
-    byte stepPin = (d - 1) * 4 + 2; //2, 6, 10
+    byte stepPin = (d + 1);
     currentPeriod[d] = 0;
     digitalWrite(stepPin+1,HIGH);
   }
@@ -296,8 +298,9 @@ void EasyDrivers::resetAll()
   // Return tracking to ready state
   for (byte d=FIRST_DRIVER;d<=LAST_DRIVER;d++) {
     byte stepPin = (d - 1) * 4 + 2; //2, 6, 10
+    byte stepDirPin = d + 4; //2, 6, 10
     currentState[stepPin] = LOW;
-    digitalWrite(stepPin+1,LOW);
+    digitalWrite(stepDirPin,LOW);
     currentState[stepPin+1] = LOW; // Ready to go forward.
   }
 }

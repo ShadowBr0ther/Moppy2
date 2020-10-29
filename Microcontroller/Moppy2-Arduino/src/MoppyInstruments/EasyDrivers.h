@@ -12,6 +12,15 @@
 #include "../MoppyConfig.h"
 #include "../MoppyNetworks/MoppyNetwork.h"
 
+   #define M1_PIN_STEP 2 // X-STEP
+    #define M2_PIN_STEP 3 // Y-STEP
+    #define M3_PIN_STEP 4 // Z-STEP
+
+    #define M1_PIN_DIR 5 // X-DIR
+    #define M2_PIN_DIR 6 // Y-DIR
+    #define M3_PIN_DIR 7 // Z-DIR
+
+
 namespace instruments {
   class EasyDrivers : public MoppyInstrument {
   public:

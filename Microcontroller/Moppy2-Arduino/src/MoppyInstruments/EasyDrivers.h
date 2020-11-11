@@ -12,7 +12,7 @@
 #include "../MoppyConfig.h"
 #include "../MoppyNetworks/MoppyNetwork.h"
 
-   #define M1_PIN_STEP 2 // X-STEP
+    #define M1_PIN_STEP 2 // X-STEP
     #define M2_PIN_STEP 3 // Y-STEP
     #define M3_PIN_STEP 4 // Z-STEP
 
@@ -20,6 +20,11 @@
     #define M2_PIN_DIR 6 // Y-DIR
     #define M3_PIN_DIR 7 // Z-DIR
 
+    #define HDD1_PIN 9  //X-Endstop
+    #define HDD2_PIN 10 //Y-Endstop
+    #define HDD3_PIN 11 //Z-Endstop
+    #define HDD4_PIN 12 //SpinEnable
+    #define HDD5_PIN 13 //SpinEnable
 
 namespace instruments {
   class EasyDrivers : public MoppyInstrument {
@@ -43,6 +48,7 @@ namespace instruments {
 
     static void resetAll();
     static void togglePin(byte driverNum, byte pin, byte direction_pin);
+    static void toggleHDDPin(byte pin);
     static void haltAllDrivers();
     static void reset(byte driverNum);
     static void tick();

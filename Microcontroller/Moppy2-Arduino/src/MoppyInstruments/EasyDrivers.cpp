@@ -74,11 +74,29 @@ void EasyDrivers::setup() {
   pinMode(M2_PIN_DIR, OUTPUT); // Direction pin 1
   pinMode(M3_PIN_DIR, OUTPUT); // MS1 pin 1
 
-  pinMode(9, HDD1_PIN); 
-  pinMode(10, HDD2_PIN);
-  pinMode(11, HDD3_PIN); 
-  pinMode(12, HDD4_PIN);
-  pinMode(13, HDD5_PIN);
+
+  pinMode(2, OUTPUT); // Step pin 1
+  pinMode(3, OUTPUT); // Direction pin 1
+  pinMode(4, OUTPUT); // MS1 pin 1
+  pinMode(5, OUTPUT); // MS2 pin 1
+  pinMode(14, INPUT_PULLUP); // Front Direction-Switch 1
+  pinMode(15, INPUT_PULLUP); // Rear Direction-Switch 1
+
+  pinMode(6, OUTPUT); // Step pin 2
+  pinMode(7, OUTPUT); // Direction pin 2
+  pinMode(8, OUTPUT); // MS1 pin 2
+  pinMode(9, OUTPUT); // MS2 pin 2
+  pinMode(16, INPUT_PULLUP); // Front Direction-Switch 2
+  pinMode(17, INPUT_PULLUP); // Rear Direction-Switch 2
+
+  pinMode(10, OUTPUT); // Step pin 3
+  pinMode(11, OUTPUT); // Direction pin 3
+  pinMode(12, OUTPUT); // MS1 pin 3
+  pinMode(13, OUTPUT); // MS2 pin 3
+  pinMode(18, INPUT_PULLUP); // Front Direction-Switch 3
+  pinMode(19, INPUT_PULLUP); // Rear Direction-Switch 3
+
+
 
   // Set the step resolution of each driver
   for(byte respin = 0;respin<LAST_DRIVER;respin++) {
@@ -98,8 +116,6 @@ void EasyDrivers::setup() {
   // first driver.
   if (PLAY_STARTUP_SOUND) {
     startupSound(FIRST_DRIVER);
-    startupHDDSound();
-
     delay(500);
     resetAll();
   }
@@ -124,19 +140,6 @@ void EasyDrivers::startupSound(byte driverNum) {
   }
 }
 
-// Play startup sound to confirm driver functionality
-void EasyDrivers::startupHDDSound() {
-  for (int iX=9; iX<13; iX++){
-    delay(100);
-    digitalWrite(iX, HIGH);
-    delay(100);
-    digitalWrite(iX, LOW);
-    delay(200);
-    digitalWrite(iX, HIGH);
-    delay(100);
-    digitalWrite(iX, LOW);
-  }
-}
 
 //
 //// Message Handlers
@@ -154,36 +157,26 @@ void EasyDrivers::dev_reset(uint8_t subAddress) {
     if (subAddress == 0x00) {
         resetAll();
     } else {
-        if ((subAddress >= 4)&&(subAddress >= 8)){
-          digitalWrite(subAddress+5, LOW);
-        } 
-        else {
+        
           reset(subAddress);
-        }
+        
     }
 }
 
 void EasyDrivers::dev_noteOn(uint8_t subAddress, uint8_t payload[]) {
     // Set the current period to the new value to play it immediately
     // Also set the originalPeriod in-case we pitch-bend
-    
-    if ((subAddress >= 4)&&(subAddress >= 8)){
-       digitalWrite(subAddress+5,HIGH);
-    }
-    else {
+
       if (payload[0] <= MAX_DRIVER_NOTE) {
           currentPeriod[subAddress] = originalPeriod[subAddress] = noteDoubleTicks[payload[0]];
       }
-    }    
+      
 }
 
 void EasyDrivers::dev_noteOff(uint8_t subAddress, uint8_t payload[]) {
-    if ((subAddress >= 4)&&(subAddress >= 8)){
-      digitalWrite(subAddress+5, LOW);
-    }
-    else {  
+ 
       currentPeriod[subAddress] = originalPeriod[subAddress] = 0;
-    }
+    
 }
 
 void EasyDrivers::dev_bendPitch(uint8_t subAddress, uint8_t payload[]) {
@@ -296,12 +289,6 @@ void EasyDrivers::reset(byte driverNum)
 // Resets all the drivers simultaneously
 void EasyDrivers::resetAll()
 {
-
-  digitalWrite(HDD1_PIN, LOW); 
-  digitalWrite(HDD2_PIN, LOW); 
-  digitalWrite(HDD3_PIN, LOW); 
-  digitalWrite(HDD4_PIN, LOW); 
-  digitalWrite(HDD5_PIN, LOW); 
 
   // Stop all drivers and set to reverse
   for (byte d=FIRST_DRIVER;d<=LAST_DRIVER;d++) {
